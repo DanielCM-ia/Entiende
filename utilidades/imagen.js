@@ -1,10 +1,12 @@
-const LADO_MAXIMO = 1600;
-const CALIDAD = 0.85;
+const LADO_MAXIMO = 1400;
+const CALIDAD = 0.8;
 const FORMATOS_ACEPTADOS = ['image/jpeg', 'image/png', 'image/webp'];
 
 /**
  * Reduce la foto antes de mandarla: una foto de móvil moderna pesa
  * varios megas y no hace falta tanto para leer un cartel.
+ * Además, las funciones de Vercel rechazan cuerpos de más de ~4,5 MB
+ * y el base64 engorda la imagen un tercio.
  * Devuelve { datos (base64 sin prefijo), tipoMime, vistaPrevia }.
  */
 export async function prepararImagen(archivo) {

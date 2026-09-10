@@ -3,16 +3,16 @@
   "version": "1.0.0",
   "private": true,
   "description": "Convierte textos difíciles (médicos, transporte público, documentos oficiales) en lectura fácil con pictogramas.",
-  "workspaces": [
-    "server",
-    "web"
-  ],
   "scripts": {
-    "dev": "npm run dev --workspace=server & npm run dev --workspace=web",
-    "dev:server": "npm run dev --workspace=server",
-    "dev:web": "npm run dev --workspace=web",
-    "build": "npm run build --workspace=web",
-    "start": "npm run start --workspace=server"
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "next": "^16.3.4",
+    "react": "^19.3.0",
+    "react-dom": "^19.3.0"
   },
   "engines": {
     "node": ">=20"

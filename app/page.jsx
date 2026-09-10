@@ -1,15 +1,17 @@
+'use client';
+
 import { useEffect, useRef, useState } from 'react';
 
-import Cabecera from './componentes/Cabecera.jsx';
-import SelectorTipo from './componentes/SelectorTipo.jsx';
-import EntradaTexto from './componentes/EntradaTexto.jsx';
-import EntradaFoto from './componentes/EntradaFoto.jsx';
-import Resultado, { documentoComoTexto } from './componentes/Resultado.jsx';
+import Cabecera from '../componentes/Cabecera.jsx';
+import SelectorTipo from '../componentes/SelectorTipo.jsx';
+import EntradaTexto from '../componentes/EntradaTexto.jsx';
+import EntradaFoto from '../componentes/EntradaFoto.jsx';
+import Resultado, { documentoComoTexto } from '../componentes/Resultado.jsx';
 
-import { useAjustesLectura } from './hooks/useAjustesLectura.js';
-import { useVozAlta } from './hooks/useVozAlta.js';
-import { comprobarSalud, simplificar } from './api.js';
-import { EJEMPLOS } from './datos/ejemplos.js';
+import { useAjustesLectura } from '../hooks/useAjustesLectura.js';
+import { useVozAlta } from '../hooks/useVozAlta.js';
+import { comprobarSalud, simplificar } from '../lib/api.js';
+import { EJEMPLOS } from '../datos/ejemplos.js';
 
 export default function App() {
   const { tamano, setTamano, contraste, alternarContraste } = useAjustesLectura();
@@ -116,8 +118,8 @@ export default function App() {
         {servidorListo === false && (
           <p className="aviso-servidor no-imprimir">
             El servidor todavía no tiene configurada la clave de MiniMax.
-            Copia <code>server/.env.example</code> a <code>server/.env</code>, pon la clave
-            y vuelve a arrancarlo.
+            En local, copia <code>.env.example</code> a <code>.env.local</code> y pon la clave.
+            En Vercel, añádela en <code>Settings → Environment Variables</code>.
           </p>
         )}
 
