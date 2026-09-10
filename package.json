@@ -1,0 +1,20 @@
+{
+  "name": "entiende",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Convierte textos difíciles (médicos, transporte público, documentos oficiales) en lectura fácil con pictogramas.",
+  "workspaces": [
+    "server",
+    "web"
+  ],
+  "scripts": {
+    "dev": "npm run dev --workspace=server & npm run dev --workspace=web",
+    "dev:server": "npm run dev --workspace=server",
+    "dev:web": "npm run dev --workspace=web",
+    "build": "npm run build --workspace=web",
+    "start": "npm run start --workspace=server"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

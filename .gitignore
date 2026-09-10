@@ -1,0 +1,16 @@
+# Sistema
+.DS_Store
+Thumbs.db
+
+# Editores
+.vscode/
+.idea/
+*.swp
+
+# Dependencias y builds (por si en el futuro se añade tooling)
+node_modules/
+dist/
+
+# Nunca subir claves
+.env
+*.key
