@@ -71,6 +71,17 @@ npm start
    *Production* y *Preview*. La clave nunca se escribe en el repositorio.
 4. *Deploy*.
 
+Si el proyecto de Vercel se creó cuando el repositorio tenía otra forma,
+comprueba en *Settings → Build and Deployment* que:
+
+- **Root Directory** está vacío. La aplicación vive en la raíz del repositorio.
+  Un valor heredado como `web` o `server` hace fallar el despliegue en segundos.
+- **Framework Preset** es *Next.js*, no *Vite* ni *Other*.
+- **Build Command** y **Output Directory** están en *Override: off*.
+
+Si algo de eso quedó mal al importar, lo más rápido es borrar el proyecto en
+Vercel y volver a importarlo desde `main`: la detección automática acierta.
+
 Por línea de comandos, comprobando antes con qué cuenta estás:
 
 ```bash
