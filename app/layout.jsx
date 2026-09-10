@@ -12,10 +12,22 @@ export const viewport = {
   initialScale: 1,
 };
 
+// Aplica lo que la persona eligió antes de que se pinte nada: si esperamos a
+// React, la página aparece con la letra pequeña y da un salto.
+const AJUSTES_GUARDADOS = `(function(){try{
+var d=document.documentElement.dataset;
+var t=localStorage.getItem('entiende.tamano');
+if(t==='grande'||t==='enorme')d.tamano=t;
+if(localStorage.getItem('entiende.contraste')==='alto')d.contraste='alto';
+}catch(e){}})()`;
+
 export default function RootLayout({ children }) {
   return (
-    <html lang="es" data-tamano="normal" data-contraste="normal">
+    // El script de arriba cambia estos atributos antes de hidratar, y eso es
+    // lo que buscamos: React no debe avisar de que no coinciden.
+    <html lang="es" data-tamano="normal" data-contraste="normal" suppressHydrationWarning>
       <head>
+        <script dangerouslySetInnerHTML={{ __html: AJUSTES_GUARDADOS }} />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         {/* Atkinson Hyperlegible: tipografía pensada para baja visión. */}

@@ -14,12 +14,20 @@
   --linea:#DDE3E0;
   --tarjeta:#F6F8F7;
   --radio:14px;
-  --base:17px;
+  /* En el elemento raíz, 1rem es el tamaño que la persona tiene puesto en su
+     navegador. Así el ajuste de la aplicación se suma a esa preferencia en vez
+     de pisarla. 1.0625rem = 17px con los 16px habituales. */
+  --base:1.0625rem;
 }
 
 /* Tamaño de letra que elige la persona usuaria */
-html[data-tamano="grande"]{ --base:20px; }
-html[data-tamano="enorme"]{ --base:24px; }
+html[data-tamano="grande"]{ --base:1.25rem; }
+html[data-tamano="enorme"]{ --base:1.5rem; }
+
+/* El tamaño va en el elemento raíz, no en el cuerpo: casi todo mide en rem,
+   y rem siempre se cuenta desde la raíz. Puesto en el cuerpo, los títulos,
+   los botones y el resultado se quedaban del mismo tamaño. */
+html{ font-size:var(--base); }
 
 /* Contraste alto */
 html[data-contraste="alto"]{
@@ -42,7 +50,7 @@ body{
   background:var(--papel);
   color:var(--tinta);
   font-family:'Atkinson Hyperlegible', Verdana, 'Segoe UI', sans-serif;
-  font-size:var(--base);
+  font-size:1rem;
   line-height:1.6;
 }
 
@@ -116,7 +124,10 @@ header{ margin-bottom:36px; }
 }
 
 h1{
-  font-size:clamp(1.9rem, 5vw, 2.5rem);
+  /* El término del medio lleva una parte en rem: con 5vw a secas, el título
+     crecía con la ventana pero se quedaba clavado al subir de «grande» a
+     «muy grande». */
+  font-size:clamp(1.9rem, 1.1rem + 3.5vw, 2.5rem);
   font-weight:700;
   line-height:1.2;
   margin:0 0 14px;
@@ -393,7 +404,7 @@ button{
 }
 
 .resultado-titulo{
-  font-size:clamp(1.5rem, 4vw, 1.9rem);
+  font-size:clamp(1.5rem, 0.9rem + 2.8vw, 1.9rem);
   font-weight:700;
   line-height:1.25;
   margin:0 0 10px;
@@ -462,8 +473,8 @@ button{
 }
 
 .paso-numero{
-  width:38px;
-  height:38px;
+  width:2.25rem;
+  height:2.25rem;
   border-radius:50%;
   background:var(--primario);
   color:#fff;
@@ -478,8 +489,8 @@ button{
 .paso-aviso .paso-numero{ background:var(--aviso-tinta); }
 
 .paso-dibujo{
-  width:72px;
-  height:72px;
+  width:4.25rem;
+  height:4.25rem;
   border-radius:10px;
   background:#fff;
   border:1px solid var(--linea);
@@ -500,8 +511,8 @@ button{
 }
 
 .dibujo-pequeno{
-  width:52px;
-  height:52px;
+  width:3rem;
+  height:3rem;
   font-size:1.2rem;
 }
 
@@ -589,7 +600,8 @@ footer a{ color:var(--primario); }
 
 @media print{
   .no-imprimir{ display:none !important; }
-  body{ background:#fff; font-size:12pt; }
+  html{ font-size:12pt; }
+  body{ background:#fff; font-size:1rem; }
   .marco{ max-width:none; padding:0; }
   h1, .lede, .herramientas{ display:none; }
   header{ margin-bottom:20px; }
