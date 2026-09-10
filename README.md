@@ -10,10 +10,13 @@ descargar en PDF.
 
 ## Cómo funciona
 
+Es una aplicación **Next.js** (App Router): la interfaz y las rutas de API viven
+en el mismo proyecto, así que todo se despliega de una vez en Vercel.
+
 ```
-Navegador (React)  ──►  Backend (Node + Express)  ──►  MiniMax (texto o foto)
-                                   │
-                                   └──────────────►  ARASAAC (pictogramas)
+Navegador (React)  ──►  Rutas de API de Next  ──►  MiniMax (texto o foto)
+                              │
+                              └───────────────►  ARASAAC (pictogramas)
 ```
 
 La clave de MiniMax vive **solo en el servidor**. El navegador nunca la ve.
@@ -38,24 +41,62 @@ Hace falta Node 20 o superior.
 ```bash
 npm install
 
-cp server/.env.example server/.env
-# edita server/.env y pon tu MINIMAX_API_KEY
+cp .env.example .env.local
+# edita .env.local y pon tu MINIMAX_API_KEY
 
 npm run dev
 ```
 
-- Backend: http://localhost:3001
-- Web: http://localhost:5173 (Vite manda `/api` al backend)
+Se abre en http://localhost:3000
 
 La clave se saca de la consola de MiniMax:
 https://platform.minimax.io/user-center/basic-information/interface-key
 
-### Producción
+Para probar la compilación de producción en local:
 
 ```bash
-npm run build   # compila la web en web/dist
-npm start       # el backend sirve la API y la web ya compilada
+npm run build
+npm start
 ```
+
+## Despliegue en Vercel
+
+1. Entra en [vercel.com](https://vercel.com) con la cuenta de GitHub **dueña del
+   repositorio**. La cuenta con la que inicies sesión es la cuenta donde acaba
+   el proyecto.
+2. *Add New → Project → Import Git Repository* y elige este repositorio.
+   Vercel detecta Next.js solo: no hay que tocar el comando de compilación
+   ni el directorio de salida.
+3. En *Settings → Environment Variables* añade `MINIMAX_API_KEY`, marcada para
+   *Production* y *Preview*. La clave nunca se escribe en el repositorio.
+4. *Deploy*.
+
+Por línea de comandos, comprobando antes con qué cuenta estás:
+
+```bash
+npx vercel logout
+npx vercel login      # con el correo de la cuenta que debe alojar el proyecto
+npx vercel whoami     # confirma la cuenta antes de seguir
+npx vercel link
+npx vercel env add MINIMAX_API_KEY production
+npx vercel --prod
+```
+
+### Límites de la plataforma que afectan a esta aplicación
+
+- **Duración de la función.** `app/api/simplificar/route.js` declara
+  `maxDuration = 60`, porque leer una foto con el modelo de visión tarda.
+  Si tu plan no llega a 60 segundos, baja ese número **y también**
+  `MINIMAX_TIMEOUT_MS`, que siempre debe quedar por debajo: así la persona
+  usuaria recibe un mensaje en lectura fácil en vez de un 504 seco.
+- **Tamaño de la petición.** Las funciones rechazan cuerpos de más de unos
+  4,5 MB. Por eso el navegador reduce las fotos a 1400 píxeles de lado antes
+  de subirlas (`utilidades/imagen.js`).
+- **Limitador de peticiones.** Cuenta en memoria, y en serverless cada
+  instancia tiene la suya. Frena picos desde una misma IP, pero no es una
+  defensa seria: para eso, el firewall de Vercel o un contador compartido.
+  Tenlo en cuenta si el repositorio es público, porque el gasto de la clave
+  corre por cuenta de quien la pone.
 
 ## Variables de entorno
 
@@ -65,9 +106,10 @@ npm start       # el backend sirve la API y la web ya compilada
 | `MINIMAX_BASE_URL` | `https://api.minimax.io/v1` | Cuenta internacional. En China continental: `https://api.minimaxi.com/v1`. |
 | `MINIMAX_MODELO_TEXTO` | `MiniMax-M2.7` | Modelo para textos escritos. |
 | `MINIMAX_MODELO_VISION` | `MiniMax-M3` | Modelo para fotos. Tiene que aceptar imágenes. |
-| `PORT` | `3001` | Puerto del backend. |
-| `ORIGENES_PERMITIDOS` | `http://localhost:5173,…` | Orígenes que pueden llamar a la API. |
+| `MINIMAX_TIMEOUT_MS` | `55000` | Espera máxima al modelo. Siempre por debajo del `maxDuration` de la función. |
 | `LIMITE_POR_MINUTO` | `20` | Peticiones por minuto y por IP. |
+
+En local van en `.env.local`. En Vercel, en *Settings → Environment Variables*.
 
 ## API
 
@@ -116,13 +158,24 @@ Los errores llegan con un código estable y un mensaje ya escrito en fácil:
 ## Estructura
 
 ```
-server/            Backend Express (aquí vive la clave)
-  src/prompts.js     Reglas de lectura fácil por tipo de documento
-  src/esquema.js     Valida y normaliza lo que responde el modelo
-  src/servicios/     Clientes de MiniMax y de ARASAAC
-web/               Frontend React + Vite
-  src/componentes/   Interfaz
-  src/hooks/         Voz alta y ajustes de lectura
+app/
+  page.jsx           La interfaz (componente de cliente)
+  layout.jsx         Estructura de la página y tipografía
+  globales.css       Estilos, tamaños de letra y contraste alto
+  api/               Rutas de servidor: aquí vive la clave
+    simplificar/       Convierte texto o foto a lectura fácil
+    pictogramas/       Busca un pictograma suelto
+    salud/             Dice si la clave está puesta
+lib/
+  prompts.js         Reglas de lectura fácil por tipo de documento
+  esquema.js         Valida y normaliza lo que responde el modelo
+  minimax.js         Cliente de MiniMax
+  arasaac.js         Pictogramas, con caché
+  nucleo/            La lógica, sin saber nada del framework
+componentes/         Interfaz
+hooks/               Voz alta y ajustes de lectura
+utilidades/          Reducción de fotos en el navegador
+datos/               Tipos de documento y textos de ejemplo
 ```
 
 ## Aviso importante

@@ -7,10 +7,16 @@ Thumbs.db
 .idea/
 *.swp
 
-# Dependencias y builds (por si en el futuro se añade tooling)
+# Dependencias y compilación
 node_modules/
+.next/
+out/
 dist/
+
+# Vercel
+.vercel
 
 # Nunca subir claves
 .env
+.env*.local
 *.key
